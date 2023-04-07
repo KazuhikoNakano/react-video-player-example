@@ -10,7 +10,7 @@ const VideosPage: React.FC = () => {
 
   const handleProgress = (progress: { playedSeconds: number }) => {
     console.log(progress.playedSeconds);
-    if (progress.playedSeconds >= 3) {
+    if (progress.playedSeconds >= 10) {
       console.log('stop');
       setIsPlaying(false);
     }
@@ -22,13 +22,25 @@ const VideosPage: React.FC = () => {
         <h1 className='text-3xl font-bold underline my-3'>Videos</h1>
         <div className='[&_iframe]:rounded-md'>
           <ReactPlayer
-            url="https://youtube.com/shorts/ShadyfN8w1U?feature=share" // 動画のURLは変更してください
+            url="https://youtube.com/shorts/VBQnBeLUctI?feature=share" // 動画のURLは変更してください
             playing={isPlaying}
-            controls
+            controls={true}
             muted
             width={159}
             height={283}
             onProgress={handleProgress}
+            config={{
+              youtube: {
+                playerVars: {
+                  disablekb: 1,
+                  fs: 0,
+                  modestbranding: 0,
+                  rel: 0,
+                  iv_load_policy: 3,
+                  playsinline: 1,
+                },
+              },
+            }}
           />
         </div>
       </div>
