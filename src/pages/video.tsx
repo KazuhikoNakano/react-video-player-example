@@ -11,6 +11,7 @@ const ReactPlayer = dynamic(() => import('react-player'), {
 const VideosPage: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState([true, false, false]);
   const [isMuted, setIsMuted] = useState([true, true, true]);
+  const [isVolume, setIsVolume] = useState([0, 0, 0]);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     vertical: true,
     loop: true,
@@ -35,12 +36,14 @@ const VideosPage: React.FC = () => {
         });
       }
 
-      slider.on("created", () => {
-        nextTimeout()
-      })
-      slider.on("dragStarted", clearNextTimeout)
-      slider.on("animationEnded", nextTimeout)
-      slider.on("updated", nextTimeout)
+      // 一定時間で次のスライドへ
+      // slider.on("created", () => {
+      //   nextTimeout()
+      // })
+      // slider.on("dragStarted", clearNextTimeout)
+      // slider.on("animationEnded", nextTimeout)
+      // slider.on("updated", nextTimeout)
+
       slider.on("slideChanged", (s) => {
         changedSlide(s.track.details.rel);
       })
@@ -49,15 +52,59 @@ const VideosPage: React.FC = () => {
 
   const videoUrls = [
     "https://www.youtube.com/shorts/ZnlCbv9-d9M",
-    "https://www.youtube.com/shorts/ZnlCbv9-d9M",
-    "https://www.youtube.com/shorts/ZnlCbv9-d9M",
+    "https://www.youtube.com/shorts/_6__aznO-CQ",
+    "https://www.youtube.com/shorts/rLTPLEdJnRM",
     // "https://vimeo.com/816127333",
     // "https://vimeo.com/816127333",
     // "https://vimeo.com/816127333",
   ];
 
+  const handleProgress = (index: number) => (progress: { playedSeconds: number }) => {
+    // console.log(progress.playedSeconds);
+    // console.log(index);
+    // if (progress.playedSeconds >= 1) {
+    //   console.log('one second passed');
+    //   setIsVolume(prevState => {
+    //     const newState = [0, 0, 0];
+    //     newState[index] = 0.2;
+    //     return newState;
+    //   });
+    // }
+  };
+
+  const handlePrevSlide = (): void => {
+    instanceRef.current && instanceRef.current.prev();
+  };
+
   const handleNextSlide = (): void => {
     instanceRef.current && instanceRef.current.next();
+  };
+
+  const handlePlay = (index: number) => () => {
+    setIsPlaying(prevState => {
+      const newState = [...prevState];
+      newState[index] = true;
+      return newState;
+    });
+    setIsMuted(prevState => {
+      const newState = [...prevState];
+      newState[index] = false;
+      return newState;
+    });
+    setIsVolume(prevState => {
+      const newState = [...prevState];
+      newState[index] = 0.2;
+      return newState;
+    });
+  };
+
+  const handlePause = (index: number) => () => {
+    console.log(`handlePause: ${index}`);
+    setIsPlaying(prevState => {
+      const newState = [...prevState];
+      newState[index] = false;
+      return newState;
+    });
   };
 
   return (
@@ -66,14 +113,39 @@ const VideosPage: React.FC = () => {
         <div ref={sliderRef} className="keen-slider w-full h-[100dvh]">
         {videoUrls.map((url, index) => (
           <div key={index} className="keen-slider__slide relative">
+            <div
+              className="w-full h-10 flex items-center justify-center absolute top-0 cursor-pointer z-20"
+              onClick={() => {handlePrevSlide()}}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="text-white w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+              </svg>
+            </div>
+            {/* {console.log(`isPlaying[index] = ${index} : ${isPlaying[index]}`)} */}
+            {!isPlaying[index] && (
+              <>
+                {/* <div className="absolute top-0 left-0 w-full h-full z-10 bg-black opacity-50"></div> */}
+                <div className="absolute top-0 left-0 w-full h-full z-20 flex items-center justify-center" onClick={handlePlay(index)}>
+                  <div className="bg-red-500 w-36 h-36 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="text-white w-10 h-10">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                    </svg>
+                  </div>
+                </div>
+              </>
+            )}
             <div className='w-[100%] min-w-[300px] h-[95dvh]'>
               <ReactPlayer
                 url={url}
                 playing={isPlaying[index]}
-                muted
+                volume={isVolume[index]}
+                muted={isMuted[index]}
                 controls
                 width={'100%'}
                 height={'100%'}
+                onProgress={handleProgress(index)}
+                //onPlay={handlePlay(index)}
+                onPause={handlePause(index)}
                 config={{
                   youtube: {
                     playerVars: {
@@ -97,7 +169,7 @@ const VideosPage: React.FC = () => {
               />
             </div>
             <div
-              className="bg-black w-full h-10 flex items-center justify-center absolute bottom-0 cursor-pointer z-10"
+              className="bg-black w-full h-10 flex items-center justify-center absolute bottom-0 cursor-pointer z-20"
               onClick={() => {handleNextSlide()}}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="text-white w-6 h-6">
