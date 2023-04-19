@@ -155,7 +155,8 @@ const VideosPage: React.FC = () => {
                 url={url}
                 playing={isPlaying[index]}
                 volume={isVolume[index]}
-                muted={isMuted[index]}
+                //muted={isMuted[index]}
+                muted={false}
                 controls
                 width={'100%'}
                 height={'100%'}
