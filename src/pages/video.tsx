@@ -124,7 +124,7 @@ const VideosPage: React.FC = () => {
   return (
     <main className='flex justify-center'>
       <div>
-        <div ref={sliderRef} className="keen-slider w-full h-[100dvh]">
+        <div ref={sliderRef} className="keen-slider w-full h-[100vh]">
         {videoUrls.map((url, index) => (
           <div key={index} className="keen-slider__slide relative">
             <div
@@ -163,7 +163,7 @@ const VideosPage: React.FC = () => {
                 )}
               </div>
             )}
-            <div className='w-[100%] min-w-[300px] h-[95dvh]'>
+            <div className='w-[100%] min-w-[300px] h-[95vh]'>
               <ReactPlayer
                 url={url}
                 playing={isPlaying[index]}
