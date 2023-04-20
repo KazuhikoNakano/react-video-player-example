@@ -9,7 +9,7 @@ const ReactPlayer = dynamic(() => import('react-player'), {
 
 
 const VideosPage: React.FC = () => {
-  const [isPlaying, setIsPlaying] = useState([false, false, false]);
+  const [isPlaying, setIsPlaying] = useState([true, false, false]);
   const [isMuted, setIsMuted] = useState([true, false, false]);
   const [isVolume, setIsVolume] = useState([0, 0, 0]);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
