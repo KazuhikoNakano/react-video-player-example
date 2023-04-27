@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { ReactPlayerProps } from 'react-player';
 
 const ReactPlayer = dynamic(() => import('react-player'), {
   ssr: false,
 });
-
 
 const VideosPage: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -13,7 +11,6 @@ const VideosPage: React.FC = () => {
   const [isVolume, setIsVolume] = useState<number>(0);
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
-  const [videoDuration, setVideoDuration] = useState<number>(0);
 
   const videoUrls = [
     "https://www.youtube.com/shorts/ZnlCbv9-d9M",
@@ -21,35 +18,35 @@ const VideosPage: React.FC = () => {
     "https://www.youtube.com/shorts/rLTPLEdJnRM",
   ];
 
-  const handleDuration = (duration: number) => {
-    setVideoDuration(duration);
+  const handleVideoEnd = () => {
+    handleNextVideo();
   };
 
   const handleProgress = (progress: { playedSeconds: number }) => {
-    if (progress.playedSeconds >= videoDuration) {
-      handleNextVideo();
-    }
+    console.log(`handleProgress: ${progress.playedSeconds}`);
   };
 
   const handlePrevVideo = (): void => {
-    setCurrentVideoIndex((prevIndex) => prevIndex - 1);
+    setCurrentVideoIndex(currentVideoIndex === 0 ? videoUrls.length - 1 : currentVideoIndex - 1);
+    handlePlay();
   };
 
   const handleNextVideo = (): void => {
-    setCurrentVideoIndex((prevIndex) => prevIndex + 1);
+    setCurrentVideoIndex(currentVideoIndex === videoUrls.length - 1 ? 0 : currentVideoIndex + 1);
+    handlePlay();
   };
 
-  const handlePlay = (index: number) => () => {
+  const handlePlay = () => {
     setIsPlaying(true);
     setIsMuted(false);
     setIsVolume(0.2);
   };
 
-  const handlePause = (index: number) => () => {
+  const handlePause = () => {
     setIsPlaying(false);
   };
 
-  const handleMute = (index: number) => () => {
+  const handleMute = () => {
     setIsMuted(!isMuted);
     setIsVolume(isVolume === 0 ? 0.2 : 0);
   };
@@ -80,7 +77,7 @@ const VideosPage: React.FC = () => {
           </button>
           {!isPlaying && (
             <>
-              <div className="absolute top-0 left-0 w-full h-full z-20 flex items-center justify-center" onClick={handlePlay(currentVideoIndex)}>
+              <div className="absolute top-0 left-0 w-full h-full z-20 flex items-center justify-center" onClick={handlePlay}>
                 <div className="bg-red-500 w-36 h-36 rounded-full flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="text-white w-10 h-10">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
@@ -91,7 +88,7 @@ const VideosPage: React.FC = () => {
           )}
           {isPlaying && (
             //サウンド操作のボタン
-            <div className="absolute bg-red-500 w-10 h-10 rounded-full right-4 bottom-28 flex items-center justify-center" onClick={handleMute(currentVideoIndex)}>
+            <div className="absolute bg-red-500 w-10 h-10 rounded-full right-4 bottom-28 flex items-center justify-center" onClick={handleMute}>
               {isMuted && (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="text-white w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.531V19.94a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.506-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.395C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" />
@@ -113,9 +110,9 @@ const VideosPage: React.FC = () => {
               controls
               width={'100%'}
               height={'100%'}
-              onDuration={handleDuration}
+              onEnded={handleVideoEnd}
               onProgress={handleProgress}
-              onPause={handlePause(currentVideoIndex)}
+              onPause={handlePause}
               playsinline={true}
               config={{
                 youtube: {
