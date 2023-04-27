@@ -120,6 +120,7 @@ const VideosPage: React.FC = () => {
                     modestbranding: 1,
                     rel: 0,
                     iv_load_policy: 3,
+                    playsinline: 1,
                   },
                 },
                 vimeo: {
