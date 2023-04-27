@@ -75,7 +75,7 @@ const VideosPage: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
           </button>
-          {!isPlaying && (
+          {/* {!isPlaying && (
             <>
               <div className="absolute top-0 left-0 w-full h-full z-20 flex items-center justify-center" onClick={handlePlay}>
                 <div className="bg-red-500 w-36 h-36 rounded-full flex items-center justify-center">
@@ -85,7 +85,7 @@ const VideosPage: React.FC = () => {
                 </div>
               </div>
             </>
-          )}
+          )} */}
           {isPlaying && (
             //サウンド操作のボタン
             <div className="absolute bg-red-500 w-10 h-10 rounded-full right-4 bottom-28 flex items-center justify-center" onClick={handleMute}>
